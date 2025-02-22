@@ -33,10 +33,13 @@ jobs:
       - name: Debug Environment Variables
         run: |
           echo "HOST=${{ secrets.HOST }}"
+          echo "HOST=${{ secrets.SSH_USER }}"
 
       - name: Run Ansible playbook
         working-directory: ./ansible
         env:
+          ANSIBLE_HOST: ${{ secrets.HOST }}
+          ANSIBLE_USER: ${{ secrets.SSH_USER }}
           ANSIBLE_HOST_KEY_CHECKING: False
         run: |
           ansible-playbook -i inventory.yaml backend.yaml
