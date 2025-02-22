@@ -1,4 +1,4 @@
-name: Deploy with Ansible
+name: Backend Deployemnt
 
 on:
   push:
@@ -35,4 +35,4 @@ jobs:
         env:
           ANSIBLE_HOST_KEY_CHECKING: False
         run: |
-          ansible-playbook -i inventory backend.yml
+          ansible-playbook -i inventory backend.yaml
