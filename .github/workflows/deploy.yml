@@ -31,7 +31,8 @@ jobs:
           ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
       
       - name: Run Ansible playbook
+        working-directory: ./ansible
         env:
           ANSIBLE_HOST_KEY_CHECKING: False
         run: |
-          ansible-playbook -i inventory.yml playbook.yml
+          ansible-playbook -i inventory playbook.yml
