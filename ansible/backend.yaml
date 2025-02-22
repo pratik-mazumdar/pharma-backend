@@ -36,10 +36,10 @@
         dest: /root/pharma/backend/build/.env
         mode: '0644'
 
-    - name: Run npm start
-      shell: bash -c "source $HOME/.nvm/nvm.sh && nvm use 22 && npm start"
-      args:
-        chdir: /root/pharma/backend/build
+    - name: Restart pharma app
+      ansible.builtin.service:
+        name: pharma
+        state: restarted
     
     
     - name: Restart nginx
