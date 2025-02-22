@@ -15,21 +15,25 @@
     #       - docker-compose.production.yml
     #     build: always
 
-    
     - name: Run npm install
-      command: npm install
+      shell: bash -c "source $HOME/.nvm/nvm.sh && nvm use 22 && npm i"
       args:
         chdir: /root/pharma/backend
 
     - name: Run npm build
-      command: npm run build
+      shell: bash -c "source $HOME/.nvm/nvm.sh && nvm use 22 && npm run build"
       args:
         chdir: /root/pharma/backend
-    
+
+    - name: Run npm install for prod build
+      shell: bash -c "source $HOME/.nvm/nvm.sh && nvm use 22 && npm ci --omit='dev'"
+      args:
+        chdir: /root/pharma/backend/build
+
     - name: Run npm start
-      command: npm run start
+      shell: bash -c "source $HOME/.nvm/nvm.sh && nvm use 22 && npm start"
       args:
-        chdir: /root/pharma/backend
+        chdir: /root/pharma/backend/build
 
     - name: Restart nginx
       ansible.builtin.service:

@@ -2,7 +2,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import Product from '#models/product'
 
 export default class InventoriesController {
-  async count({ request, response }: HttpContext) {
+  async count({ request: _request, response }: HttpContext) {
     try {
       const count = await Product.query().count('* as total')
       const total: string = count[0]?.$extras?.total || 0
