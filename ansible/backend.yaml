@@ -1,0 +1,37 @@
+- name: Pharma Backend Deployment
+  hosts: webservers
+  tasks:
+    - name: Git Pull Api
+      ansible.builtin.git:
+        repo: git@github.com:pratik-mazumdar/pharma-backend.git
+        dest: /root/pharma/backend
+        update: yes
+        version: master
+
+    # - name: Build protocol using Docker Compose
+    #   community.docker.docker_compose_v2:
+    #     project_src: /root/dream-monks-sdk
+    #     files:
+    #       - docker-compose.production.yml
+    #     build: always
+
+    
+    - name: Run npm install
+      command: npm install
+      args:
+        chdir: /root/pharma/backend
+
+    - name: Run npm build
+      command: npm run build
+      args:
+        chdir: /root/pharma/backend
+    
+    - name: Run npm start
+      command: npm run start
+      args:
+        chdir: /root/pharma/backend
+
+    - name: Restart nginx
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
