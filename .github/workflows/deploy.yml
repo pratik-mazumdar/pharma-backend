@@ -30,6 +30,10 @@ jobs:
       #     chmod 600 ~/.ssh/id_rsa
       #     ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
       
+      - name: Debug Environment Variables
+        run: |
+          echo "HOST=${{ secrets.HOST }}"
+
       - name: Run Ansible playbook
         working-directory: ./ansible
         env:
