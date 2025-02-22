@@ -30,11 +30,18 @@
       args:
         chdir: /root/pharma/backend/build
 
+    - name: Create env file
+      copy:
+        content: "{{ lookup('env', 'ANSIBLE_ENV_FILE') }}"
+        dest: /root/pharma/backend/build/.env
+        mode: '0644'
+
     - name: Run npm start
       shell: bash -c "source $HOME/.nvm/nvm.sh && nvm use 22 && npm start"
       args:
         chdir: /root/pharma/backend/build
-
+    
+    
     - name: Restart nginx
       ansible.builtin.service:
         name: nginx
