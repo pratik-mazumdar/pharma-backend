@@ -12,16 +12,32 @@ import { middleware } from './kernel.js'
 
 const AuthController = () => import('#controllers/auth_controller')
 // const UsersController = () => import('#controllers/users_controller')
-const InventoriesController = () => import('#controllers/inventories_controller')
+const ProductController = () => import('#controllers/product_controller')
+const OrdersController = () => import('#controllers/orders_controller')
 
 router
   .group(() => {
-    router.post('/', [InventoriesController, 'create'])
+    router.post('/', [OrdersController, 'create'])
 
-    router.put('/:id', [InventoriesController, 'update'])
-    router.get('/:id', [InventoriesController, 'get'])
-    router.get('/', [InventoriesController, 'getAll'])
-    router.get('/count', [InventoriesController, 'count'])
+    router.get('/:id', [OrdersController, 'get'])
+    router.get('/', [OrdersController, 'getAll'])
+    router.get('/count', [OrdersController, 'count'])
+  })
+  .prefix('/api/orders')
+  .use(
+    middleware.auth({
+      guards: ['api'],
+    })
+  )
+
+router
+  .group(() => {
+    router.post('/', [ProductController, 'create'])
+
+    router.put('/:id', [ProductController, 'update'])
+    router.get('/:id', [ProductController, 'get'])
+    router.get('/', [ProductController, 'getAll'])
+    router.get('/count', [ProductController, 'count'])
   })
   .prefix('/api/products')
   .use(

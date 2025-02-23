@@ -3,27 +3,28 @@ import { BaseModel, column, beforeCreate } from '@adonisjs/lucid/orm'
 import { randomUUID } from 'node:crypto'
 
 export default class Product extends BaseModel {
-  @column({ isPrimary: true })
-  declare id: string
-
   @beforeCreate()
   public static assignUuid(product: Product) {
     product.id = randomUUID()
+    product.isLowStock = false
   }
+
+  @column({ isPrimary: true })
+  declare id: string
 
   @column()
   declare name: string
 
   @column.dateTime({
-    serialize: (value: DateTime) => {
-      return value.toFormat('yyyy-MM')
+    serialize: (value: string) => {
+      return DateTime.fromISO(value).toFormat('yyyy-MM')
     },
   })
   declare manufacturingDate: DateTime
 
   @column.dateTime({
-    serialize: (value: DateTime) => {
-      return value.toFormat('yyyy-MM')
+    serialize: (value: string) => {
+      return DateTime.fromISO(value).toFormat('yyyy-MM')
     },
   })
   declare expiryDate: DateTime
@@ -37,7 +38,6 @@ export default class Product extends BaseModel {
   @column()
   declare sellingPrice: number
 
-  // defaul value is false
   @column()
   declare isLowStock: boolean
 
