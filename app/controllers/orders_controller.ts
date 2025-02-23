@@ -27,8 +27,11 @@ export default class OrdersController {
 
   public async create({ request, response }: HttpContext) {
     const data = request.only(['customerName', 'price', 'products'])
+    const order = await Order.create(data)
 
+    const orderIds = []
     for (const product of data.products) {
+      orderIds.push(product.id)
       Product.query()
         .where('id', product.id)
         .decrement('stock', product.quantity)
@@ -37,7 +40,7 @@ export default class OrdersController {
         })
     }
 
-    const order = await Order.create(data)
+    await order.related('products').attach(orderIds)
     return response.created(order)
   }
 
@@ -47,24 +50,5 @@ export default class OrdersController {
 
     await order.load('products') // Load related products
     return response.ok(order)
-  }
-
-  public async update({ params, request, response }: HttpContext) {
-    const order = await Order.find(params.id)
-    if (!order) return response.notFound({ message: 'Order not found' })
-
-    const data = request.only(['customerName', 'price'])
-    order.merge(data)
-    await order.save()
-
-    return response.ok(order)
-  }
-
-  public async destroy({ params, response }: HttpContext) {
-    const order = await Order.find(params.id)
-    if (!order) return response.notFound({ message: 'Order not found' })
-
-    await order.delete()
-    return response.noContent()
   }
 }

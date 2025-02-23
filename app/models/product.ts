@@ -1,6 +1,8 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, beforeCreate } from '@adonisjs/lucid/orm'
+import { BaseModel, column, beforeCreate, manyToMany } from '@adonisjs/lucid/orm'
 import { randomUUID } from 'node:crypto'
+import Order from './order.js'
+import { type ManyToMany } from '@adonisjs/lucid/types/relations'
 
 export default class Product extends BaseModel {
   @beforeCreate()
@@ -14,6 +16,9 @@ export default class Product extends BaseModel {
 
   @column()
   declare name: string
+
+  @manyToMany(() => Order, { pivotTable: 'order_products' })
+  declare products: ManyToMany<typeof Order>
 
   @column.dateTime({
     serialize: (value: string) => {

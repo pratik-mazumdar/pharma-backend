@@ -18,10 +18,9 @@ const OrdersController = () => import('#controllers/orders_controller')
 router
   .group(() => {
     router.post('/', [OrdersController, 'create'])
-
+    router.get('/count', [OrdersController, 'count'])
     router.get('/:id', [OrdersController, 'get'])
     router.get('/', [OrdersController, 'getAll'])
-    router.get('/count', [OrdersController, 'count'])
   })
   .prefix('/api/orders')
   .use(
@@ -33,11 +32,10 @@ router
 router
   .group(() => {
     router.post('/', [ProductController, 'create'])
-
+    router.get('/count', [ProductController, 'count'])
     router.put('/:id', [ProductController, 'update'])
     router.get('/:id', [ProductController, 'get'])
     router.get('/', [ProductController, 'getAll'])
-    router.get('/count', [ProductController, 'count'])
   })
   .prefix('/api/products')
   .use(

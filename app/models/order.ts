@@ -1,8 +1,8 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, beforeCreate, hasMany } from '@adonisjs/lucid/orm'
+import { BaseModel, column, beforeCreate, manyToMany } from '@adonisjs/lucid/orm'
 import { randomUUID } from 'node:crypto'
 import Product from './product.js'
-import { type HasMany } from '@adonisjs/lucid/types/relations'
+import { type ManyToMany } from '@adonisjs/lucid/types/relations'
 
 export default class Order extends BaseModel {
   @column({ isPrimary: true })
@@ -19,8 +19,8 @@ export default class Order extends BaseModel {
   @column()
   declare price: number
 
-  @hasMany(() => Product)
-  declare products: HasMany<typeof Product>
+  @manyToMany(() => Product, { pivotTable: 'order_products' })
+  declare products: ManyToMany<typeof Product>
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
