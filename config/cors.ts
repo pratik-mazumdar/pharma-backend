@@ -7,13 +7,13 @@ import { defineConfig } from '@adonisjs/cors'
  * https://docs.adonisjs.com/guides/security/cors
  */
 const corsConfig = defineConfig({
-  enabled: false,
-  // origin: true,
-  // methods: ['GET', 'HEAD', 'POST', 'PUT', 'DELETE'],
-  // headers: true,
-  // exposeHeaders: [],
-  // credentials: true,
-  // maxAge: 90,
+  enabled: true,
+  origin: ['localhost', 'pharma.dreammonks.com'],
+  methods: ['GET', 'HEAD', 'POST', 'PUT', 'DELETE'],
+  headers: true,
+  exposeHeaders: [],
+  credentials: true,
+  maxAge: 90,
 })
 
 export default corsConfig
