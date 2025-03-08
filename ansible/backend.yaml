@@ -38,5 +38,5 @@
 
     - name: Restart pharma app
       ansible.builtin.service:
-        name: pharma
+        name: pharma-backend
         state: restarted
