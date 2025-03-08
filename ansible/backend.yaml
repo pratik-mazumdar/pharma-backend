@@ -40,9 +40,3 @@
       ansible.builtin.service:
         name: pharma
         state: restarted
-    
-    
-    - name: Restart nginx
-      ansible.builtin.service:
-        name: nginx
-        state: restarted
