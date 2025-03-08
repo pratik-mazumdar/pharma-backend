@@ -32,7 +32,7 @@ router
 router
   .group(() => {
     router.post('/', [ProductController, 'create'])
-    router.get('/count', [ProductController, 'count'])
+    router.get('/summary', [ProductController, 'summary'])
     router.put('/:id', [ProductController, 'update'])
     router.get('/:id', [ProductController, 'get'])
     router.get('/', [ProductController, 'getAll'])

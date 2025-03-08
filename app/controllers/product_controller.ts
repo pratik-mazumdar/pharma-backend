@@ -1,15 +1,35 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import Product from '#models/product'
+import { DateTime } from 'luxon'
 
 export default class InventoriesController {
-  async count({ request: _request, response }: HttpContext) {
+  async summary({ request: _request, response, auth }: HttpContext) {
     try {
-      const count = await Product.query().count('* as total')
-      const total: string = count[0]?.$extras?.total || 0
+      const now = DateTime.now().toISODate()
+
+      const userId = auth.user?.id
+
+      const [totalProducts, totalLowStock, totalExpired] = await Promise.all([
+        Product.query()
+          .where('user_id', userId as string)
+          .count('* as total'),
+        Product.query()
+          .where('user_id', userId as string)
+          .where('is_low_stock', true)
+          .count('* as total'),
+        Product.query()
+          .where('user_id', userId as string)
+          .where('expiry_date', '<', now)
+          .count('* as total'),
+      ])
 
       return response.created({
         message: 'Total products',
-        products: { count: Number(total) },
+        products: {
+          count: totalProducts[0].$extras.total,
+          lowStock: totalLowStock[0].$extras.total,
+          expired: totalExpired[0].$extras.total,
+        },
       })
     } catch (error) {
       return response.internalServerError(error)
@@ -45,9 +65,9 @@ export default class InventoriesController {
     }
   }
 
-  async get({ params, response }: HttpContext) {
+  async get({ params, response, auth }: HttpContext) {
     try {
-      const product = await Product.find(params.id)
+      const product = await Product.findManyBy({ id: params.id, userId: auth.user?.id as string })
       if (!product) {
         return response.notFound({ message: 'Invalid product id' })
       }
@@ -57,11 +77,13 @@ export default class InventoriesController {
     }
   }
 
-  async getAll({ request, response }: HttpContext) {
+  async getAll({ request, response, auth }: HttpContext) {
     try {
       const page = request.input('page', 1)
       const limit = request.input('limit', 10)
-      const products = await Product.query().paginate(page, limit)
+      const products = await Product.query()
+        .where('user_id', auth.user?.id as string)
+        .paginate(page, limit)
       return response.created({ message: 'List of all products', products })
     } catch (error) {
       return response.internalServerError(error)

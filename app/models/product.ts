@@ -1,15 +1,33 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, beforeCreate, manyToMany } from '@adonisjs/lucid/orm'
+import {
+  BaseModel,
+  column,
+  beforeCreate,
+  manyToMany,
+  belongsTo,
+  beforeSave,
+  computed,
+} from '@adonisjs/lucid/orm'
 import { randomUUID } from 'node:crypto'
 import Order from './order.js'
-import { type ManyToMany } from '@adonisjs/lucid/types/relations'
+import { type BelongsTo, type ManyToMany } from '@adonisjs/lucid/types/relations'
+import User from './user.js'
 
 export default class Product extends BaseModel {
   @beforeCreate()
   public static assignUuid(product: Product) {
     product.id = randomUUID()
-    product.isLowStock = false
   }
+
+  @beforeSave()
+  public static updateLowStockFlag(product: Product) {
+    if (product.initialStock !== undefined && product.stock !== undefined) {
+      product.isLowStock = product.stock < product.initialStock * 0.3
+    }
+  }
+
+  @column()
+  declare userId: string
 
   @column({ isPrimary: true })
   declare id: string
@@ -45,6 +63,14 @@ export default class Product extends BaseModel {
 
   @column()
   declare isLowStock: boolean
+
+  @computed()
+  public get isExpired(): boolean {
+    return this.expiryDate ? DateTime.now() > this.expiryDate : false
+  }
+
+  @belongsTo(() => User)
+  declare user: BelongsTo<typeof User>
 
   @column()
   declare stock: number
